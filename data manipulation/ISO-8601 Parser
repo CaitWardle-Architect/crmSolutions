@@ -1,16 +1,24 @@
 # Feature: ISO-8601 Date Splitter
-Use Case: HubSpot date stamps provide full ISO string. In order to cascade historical account renewals to the correct month, 
+
+## Use Case: HubSpot date stamps provide full ISO string. In order to cascade historical account renewals to the correct month, 
 requirement to focus on only month part, regardless of day/year in order to plan work throughout the year and not front-load bulk 
 renewals to a single month.
 
 ## Solution: Workflow leveraging Data Operations Hub and custom formula to populate new property.
 
 ## The Logic
-#New Deal Property created (single-line string text) "Contract Expiry _ Month"
-#Custom Workflow:
-Enrolment Trigger: [Contract Expiry Date] is known
-Action 1: Format Data
-Custom Formula: format_datetime([enrolled_object.current_contract_expiry_date],"MMMM")
-Action 2: Save output of Action 1 to [enrolled_object.contract_expiry___month]
+**Property Created:** `Contract Expiry _ Month` (Single-line text)
+
+**Workflow Architecture:**
+* **Enrollment Trigger:** `[Contract Expiry Date]` is known.
+* **Action 1 (Format Data):** * **Custom Formula:** `format_datetime([enrolled_object.current_contract_expiry_date],"MMMM")`
+* **Action 2:** Copy the output of Action 1 to `[enrolled_object.contract_expiry___month]`.
 
 ## Usage
+A custom Deals view is created. 
+Filters: `[contract_expiry___month]` is *month of interest* AND `[deal_owner]` is `[me]` AND `[pipeline] is any of [3__account_management_pipeline] AND [deal_stage] is none of [closed_won] or [closed_lost]. 
+Columns: include `[product___expanded_]`, `[annual_contract_value]` and `[price_uplift_round]`
+Action: Key Account Partners to work through every Deal displaying in their list for that month. 
+If a renewal opportunity is present, Key Account Partner to create Renewal Deal in Opportunity Pipeline.
+If there is no renewal opportunity present, Key Account Partner is to create a task for the future, when opportunity is present.
+Maintenance: The [contract_expiry___month] filter is updated monthly by CRM Operations or the Commercial Sales Director to align with the current rolling forecast.

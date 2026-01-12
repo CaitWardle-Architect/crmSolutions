@@ -1,0 +1,16 @@
+# Feature: ISO-8601 Date Splitter
+Use Case: HubSpot date stamps provide full ISO string. In order to cascade historical account renewals to the correct month, 
+requirement to focus on only month part, regardless of day/year in order to plan work throughout the year and not front-load bulk 
+renewals to a single month.
+
+## Solution: Workflow leveraging Data Operations Hub and custom formula to populate new property.
+
+## The Logic
+#New Deal Property created (single-line string text) "Contract Expiry _ Month"
+#Custom Workflow:
+Enrolment Trigger: [Contract Expiry Date] is known
+Action 1: Format Data
+Custom Formula: format_datetime([enrolled_object.current_contract_expiry_date],"MMMM")
+Action 2: Save output of Action 1 to [enrolled_object.contract_expiry___month]
+
+## Usage
